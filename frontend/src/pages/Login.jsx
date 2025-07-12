@@ -3,8 +3,11 @@ import axios from "axios";
 import { loginRoute, registerRoute } from "../api/routes";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
+
 
 const Login = () => {
+    const navigate = useNavigate();
   const [currentState, setCurrentState] = useState("Sign Up");
   const [formData, setFormData] = useState({
     username: "",
@@ -16,26 +19,32 @@ const Login = () => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleLoginAndSignup = async () => {
-    try {
-      if (currentState === "Login") {
-        const res = await axios.post(loginRoute, {
-          email: formData.email,
-          password: formData.password,
-        });
-        toast.success("Login successful!");
-        console.log("Login successful:", res.data);
-      } else {
-        const res = await axios.post(registerRoute, formData);
-        toast.success("Signup successful!");
-        console.log("Signup successful:", res.data);
+const handleLoginAndSignup = async () => {
+  try {
+    if (currentState === "Login") {
+      const res = await axios.post(loginRoute, {
+        email: formData.email,
+        password: formData.password,
+      });
+      // Save user data to localStorage
+      localStorage.setItem("user", JSON.stringify(res.data.data));
+      toast.success(res.data.message);
+      navigate("/profile");
+    } else {
+      const res = await axios.post(registerRoute, formData);
+      // Save user data to localStorage (if your backend returns it on signup)
+      if (res.data.data) {
+        localStorage.setItem("user", JSON.stringify(res.data.data));
       }
-    } catch (err) {
-      const msg = err.response?.data?.message || "Something went wrong!";
-      toast.error(msg);
-      console.error("Auth error:", msg);
+      toast.success(res.data.message);
     }
-  };
+  } catch (err) {
+    const msg = err.response?.data?.message || "Something went wrong!";
+    toast.error(msg);
+    console.error("Auth error:", msg);
+  }
+};
+
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
