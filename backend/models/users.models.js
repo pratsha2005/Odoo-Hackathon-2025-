@@ -18,6 +18,10 @@ const userSchema = mongoose.Schema({
     isAdmin: {
         type: Boolean,
         default: false
+    },
+    redeemPoints: {
+        type: Number,
+        default: 100
     }
     // profile: {
     //     type: String,
