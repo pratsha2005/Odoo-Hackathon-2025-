@@ -11,7 +11,7 @@ const ShopContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({});
   const navigate = useNavigate();
 
-  const currency = "$";
+  const redeemmPointIconPath = "$";
   const delivery_fee = 10;
 
   useEffect(() => {
@@ -97,7 +97,7 @@ const ShopContextProvider = (props) => {
 
   const value = {
     products,
-    currency,
+    redeemmPointIconPath,
     delivery_fee,
     search,
     setSearch,

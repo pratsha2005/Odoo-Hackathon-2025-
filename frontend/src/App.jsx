@@ -7,6 +7,8 @@ import SearchBar from './components/SearchBar'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Products from './pages/Products'
+import Product from './pages/Product'
+import AddProduct from './pages/AddProduct'
 
 
 function App() {
@@ -19,6 +21,8 @@ function App() {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/products' element={<Products />} />
+        <Route path='/product/:productId' element={<Product />} />
+        <Route path='/add-product' element={<AddProduct />} />
         {/* Add more routes as needed */}
       </Routes>
       <Footer />
