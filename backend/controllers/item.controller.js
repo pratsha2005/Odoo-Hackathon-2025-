@@ -2,10 +2,10 @@ import { Item } from "../models/item.models.js";
 
 const addItem = async (req, res) => {
     try {
-        const { description, redeemPoints } = req.body;
+        const { description, redeemPoints, category, subcategory, size } = req.body;
 
-        if (!description || !redeemPoints) {
-            throw new Error("Require description and redeemPoints");
+        if (!description || !redeemPoints || !category || !subcategory || !size) {
+            throw new Error("Require all fields");
         }
         const user = req.user;
         const item = await Item.create({
@@ -13,6 +13,9 @@ const addItem = async (req, res) => {
             description,
             redeemPoints,
             image: req.file?.buffer || null,
+            category,
+            subcategory,
+            size
         });
 
     

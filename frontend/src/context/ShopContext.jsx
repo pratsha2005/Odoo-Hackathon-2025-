@@ -11,7 +11,7 @@ const ShopContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({});
   const navigate = useNavigate();
 
-  const redeemmPointIconPath = "$";
+  const redeemmPointIconPath = "/reedeem-coin.webp"; 
   const delivery_fee = 10;
 
   useEffect(() => {

@@ -5,7 +5,7 @@ import { ShopContext } from '../context/ShopContext';
 const Product = () => {
 
   const {productId} = useParams();
-  const {products, currency, addToCart} = useContext(ShopContext);
+  const {products, redeemPointPath, addToCart} = useContext(ShopContext);
   const [productData, setProductData] = useState(false);
   const [image, setImage] = useState('');
   const [size, setSize] = useState('');
@@ -52,7 +52,10 @@ const Product = () => {
         {/* Product Info */}
         <div className='flex-1'>
           <h1 className='mt-2 text-2xl font-medium'>{productData.name}</h1>
-          <p className='mt-5 text-3xl font-medium'>{productData.price} *</p>
+          <div className='flex items-center gap-2'>
+            <img className=' w-8 h-8' src="/redeem_coin.webp" alt="" />
+            <span className=' text-3xl font-medium'>{productData.price}</span>
+          </div>
           <p className='mt-5 text-gray-500 md:w-4/5'>{productData.description}</p>
           <div className='flex flex-col gap-4 my-8'>
             <p>Size</p>

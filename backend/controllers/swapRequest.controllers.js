@@ -36,6 +36,23 @@ const createSwapRequest = async(req, res) => {
     })
 }
 
-export {
-    createSwapRequest
+
+const rejectRequest = async (req, res) => {
+    const {swapId} = req.params
+    const swap = await Swap.findByIdAndDelete(swapId);
+
+    if(!swap){
+        throw new Error("Swap request not found")
+    }
+    return res
+    .status(201)
+    .json({
+        message: "Swap Request rejected successfully",
+    })
+
 }
+export {
+    createSwapRequest,
+    rejectRequest
+}
+

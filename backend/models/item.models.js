@@ -20,6 +20,18 @@ const itemSchema = mongoose.Schema({
     availability: {
         type: Boolean,
         default: true
+    },
+    category: {
+        type: String,
+        enum: ["Men", "Women", "Kids"]
+    },
+    size: {
+        type: String,
+        enum: ["S", "M", "L", "XL"]
+    },
+    subcategory: {
+        type: String,
+        enum: ["Bottomwear", "Topwear"]
     }
 })
 

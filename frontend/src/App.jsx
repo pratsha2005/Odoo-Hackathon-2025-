@@ -10,6 +10,7 @@ import Products from './pages/Products'
 import Product from './pages/Product'
 import AddProduct from './pages/AddProduct'
 import Profile from './pages/Profile'
+import Login from './pages/Login'
 
 
 function App() {
@@ -25,6 +26,8 @@ function App() {
         <Route path='/product/:productId' element={<Product />} />
         <Route path='/add-product' element={<AddProduct />} />
         <Route path='/profile' element={<Profile />} />
+        <Route path='/login' element={<Login />} />
+
         {/* Add more routes as needed */}
       </Routes>
       <Footer />
