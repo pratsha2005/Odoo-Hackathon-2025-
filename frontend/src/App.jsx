@@ -11,6 +11,7 @@ import Product from './pages/Product'
 import AddProduct from './pages/AddProduct'
 import Profile from './pages/Profile'
 import Login from './pages/Login'
+import ProtectedRoute from './components/ProtectedRoute'
 
 
 function App() {
@@ -24,8 +25,10 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path='/products' element={<Products />} />
         <Route path='/product/:productId' element={<Product />} />
-        <Route path='/add-product' element={<AddProduct />} />
-        <Route path='/profile' element={<Profile />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path='/add-product' element={<AddProduct />} />
+          <Route path='/profile' element={<Profile />} />
+        </Route>
         <Route path='/login' element={<Login />} />
 
         {/* Add more routes as needed */}
