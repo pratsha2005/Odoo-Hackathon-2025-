@@ -1,8 +1,19 @@
 import React from 'react'
+import Hero from '../components/Hero'
+import LatestCollection from '../components/LatestCollection'
+import BestSeller from '../components/BestSeller'
+import OurPolicy from '../components/OurPolicy'
+import NewsLetterBox from '../components/NewsLetterBox'
 
-function Home() {
+const Home = () => {
   return (
-    <div>Home f;asjfa;jfawejifweo;jfo</div>
+    <div>
+      <Hero />
+      <LatestCollection />
+      <BestSeller />
+      <OurPolicy />
+      <NewsLetterBox />
+    </div>
   )
 }
 
