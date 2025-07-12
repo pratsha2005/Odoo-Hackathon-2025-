@@ -18,8 +18,8 @@ const itemSchema = mongoose.Schema({
         ref: "User",
     },
     availability: {
-        type: Boolean,
-        default: true
+        type: String,
+        enum: ["available", "swapped"]
     },
     category: {
         type: String,

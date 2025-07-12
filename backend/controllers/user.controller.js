@@ -7,7 +7,7 @@ const options = {
 }
 
 const registerUser = async (req, res) => {
-    const {username, email, password} = req.body 
+    const {username, email, password, isAdmin} = req.body 
     //verification
     if([username, email, password].some((field) => field?.trim() === "")){
         throw new Error("Please fill in all fields")
@@ -23,7 +23,8 @@ const registerUser = async (req, res) => {
     const user = await User.create({
         username: username,
         email,
-        password
+        password,
+        isAdmin
     })
 
 
