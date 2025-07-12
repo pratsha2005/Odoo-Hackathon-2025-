@@ -28,6 +28,7 @@ const handleLoginAndSignup = async () => {
       });
       // Save user data to localStorage
       localStorage.setItem("user", JSON.stringify(res.data.data));
+      localStorage.setItem("token", res.data.token);
       toast.success(res.data.message);
       navigate("/profile");
     } else {

@@ -92,6 +92,7 @@ const getItemByUser = async(req, res) => {
 const getAllItems = async(req, res) => {
     try {
         const items = await Item.find({availability: "available"}).populate('uploader', 'profile username').lean();
+        
         if(!items) {
             throw new Error("Some error occurred in getting all items")
         }
