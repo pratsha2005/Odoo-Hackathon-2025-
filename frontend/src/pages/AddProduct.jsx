@@ -1,121 +1,181 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { addProductRoute } from '../api/routes'; // Adjust the import path as necessary
+import axios from 'axios';
 
 const AddProduct = () => {
-  const [images, setImages] = useState([]);
-  const [preview, setPreview] = useState([]);
-  const [name, setName] = useState('');
-  const [price, setPrice] = useState('');
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [sizes, setSizes] = useState([]);
-  const [sizeInput, setSizeInput] = useState('');
+  const [redeemPoints, setRedeemPoints] = useState('');
+  const [category, setCategory] = useState('');
+  const [subcategory, setSubcategory] = useState('');
+  const [size, setSize] = useState('');
+  const fileInputRef = useRef();
 
+  // Handle image upload
   const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    setImages(files);
+    const file = e.target.files[0];
+    setImage(file);
 
-    // Preview images
-    const previews = files.map(file => URL.createObjectURL(file));
-    setPreview(previews);
-  };
-
-  const handleAddSize = () => {
-    if (sizeInput && !sizes.includes(sizeInput)) {
-      setSizes([...sizes, sizeInput]);
-      setSizeInput('');
+    // Preview image
+    if (file) {
+      const previewUrl = URL.createObjectURL(file);
+      setPreview(previewUrl);
+    } else {
+      setPreview(null);
     }
   };
 
-  const handleRemoveSize = (size) => {
-    setSizes(sizes.filter(s => s !== size));
-  };
-
-  const handleSubmit = (e) => {
+  // Submit form
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here (e.g., send to backend)
-    alert('Product added!');
+
+    // Basic validation
+    if (!description || !redeemPoints || !category || !subcategory || !size) {
+      alert('Please fill all required fields.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('description', description); // Main product name/desc
+    formData.append('redeemPoints', redeemPoints);
+    formData.append('category', category);
+    formData.append('subcategory', subcategory);
+    formData.append('size', size);
+    if (title) formData.append('title', title); // Optional, if backend supports
+    if (image) formData.append('image', image);
+
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("No token found. Please login again.");
+        return;
+      }
+
+      await axios.post(addProductRoute, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      alert('Product added successfully!');
+
+      // Clear form
+      setTitle('');
+      setDescription('');
+      setRedeemPoints('');
+      setCategory('');
+      setSubcategory('');
+      setSize('');
+      setImage(null);
+      setPreview(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert(
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        'Something went wrong while uploading the product.'
+      );
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className='pt-10 border-t-2'>
-      <div className='flex flex-col gap-12 sm:gap-12 sm:flex-row'>
+    <form onSubmit={handleSubmit} className="pt-10 border-t-2">
+      <div className="flex flex-col gap-12 sm:gap-12 sm:flex-row">
         {/* Image Upload & Preview */}
-        <div className='flex flex-col-reverse flex-1 gap-3 sm:flex-row'>
-          <div className='flex justify-between overflow-x-auto sm:flex-col sm:overflow-y-scroll sm:justify-normal sm:w-[18.7%] w-full'>
-            {preview.map((src, idx) => (
-              <img
-                src={src}
-                key={idx}
-                className='w-[24%] sm:w-full sm:mb-3 flex-shrink-0 border-2 border-gray-200 py-2 px-2'
-                alt="Preview"
-              />
-            ))}
-          </div>
-          <div className='w-full sm:w-[80%] flex flex-col items-center'>
+        <div className="flex flex-col-reverse flex-1 gap-3 sm:flex-row">
+          <div className="w-full sm:w-[80%] flex flex-col items-center">
             <input
               type="file"
-              multiple
               accept="image/*"
               onChange={handleImageChange}
-              className='mb-4'
+              className="mb-4"
+              ref={fileInputRef}
             />
-            {preview[0] && (
-              <img src={preview[0]} className='w-full h-auto' alt="Main Preview" />
+            {preview && (
+              <img src={preview} className="w-full h-auto" alt="Preview" />
             )}
           </div>
         </div>
+
         {/* Product Info Form */}
-        <div className='flex-1'>
+        <div className="flex-1">
           <input
             type="text"
-            placeholder="Product Name"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            className='mt-2 text-2xl font-medium w-full border-b p-2'
+            placeholder="Product Title (optional)"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="mt-2 text-2xl font-medium w-full border-b p-2"
+          />
+          <textarea
+            placeholder="Product Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="mt-2 text-2xl font-medium w-full border-b p-2"
+            rows={3}
             required
           />
           <input
             type="number"
-            placeholder="Price"
-            value={price}
-            onChange={e => setPrice(e.target.value)}
-            className='mt-5 text-3xl font-medium w-full border-b p-2'
+            placeholder="Redeem Points"
+            value={redeemPoints}
+            onChange={(e) => setRedeemPoints(e.target.value)}
+            className="mt-5 text-3xl font-medium w-full border-b p-2"
             required
           />
-          <textarea
-            placeholder="Description"
-            value={description}
-            onChange={e => setDescription(e.target.value)}
-            className='mt-5 text-gray-500 md:w-4/5 border p-2'
-            rows={4}
-            required
-          />
-          <div className='flex flex-col gap-4 my-8'>
-            <p>Sizes</p>
-            <div className='flex gap-2'>
-              <input
-                type="text"
-                placeholder="Add size"
-                value={sizeInput}
-                onChange={e => setSizeInput(e.target.value)}
-                className='border py-2 px-4 rounded-md'
-              />
-              <button type="button" onClick={handleAddSize} className='border py-2 px-4 bg-gray-100 rounded-md'>
-                Add
-              </button>
-            </div>
-            <div className='flex gap-2'>
-              {sizes.map((size, idx) => (
-                <span key={idx} className='border py-2 px-4 bg-gray-100 rounded-md flex items-center'>
-                  {size}
-                  <button type="button" onClick={() => handleRemoveSize(size)} className='ml-2 text-red-500'>x</button>
-                </span>
-              ))}
-            </div>
+
+          <div className="flex flex-col gap-4 my-8">
+            <p>Category</p>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="border py-2 px-4 rounded-md"
+              required
+            >
+              <option value="">Select Category</option>
+              <option value="Men">Men</option>
+              <option value="Women">Women</option>
+              <option value="Kids">Kids</option>
+            </select>
           </div>
-          <div className='flex items-center gap-4 mt-5 sm:mt-10'>
+
+          <div className="flex flex-col gap-4 my-8">
+            <p>Subcategory</p>
+            <select
+              value={subcategory}
+              onChange={(e) => setSubcategory(e.target.value)}
+              className="border py-2 px-4 rounded-md"
+              required
+            >
+              <option value="">Select Subcategory</option>
+              <option value="Bottomwear">Bottomwear</option>
+              <option value="Topwear">Topwear</option>
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-4 my-8">
+            <p>Size</p>
+            <select
+              value={size}
+              onChange={(e) => setSize(e.target.value)}
+              className="border py-2 px-4 rounded-md"
+              required
+            >
+              <option value="">Select Size</option>
+              <option value="S">S</option>
+              <option value="M">M</option>
+              <option value="L">L</option>
+              <option value="XL">XL</option>
+            </select>
+          </div>
+
+          <div className="flex items-center gap-4 mt-5 sm:mt-10">
             <button
               type="submit"
-              className='px-8 py-3 text-sm text-white bg-black active:bg-gray-700'
+              className="px-8 py-3 text-sm text-white bg-black active:bg-gray-700"
             >
               Add Product
             </button>
