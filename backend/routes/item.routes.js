@@ -1,34 +1,11 @@
 import { Router } from "express";
-const upload = require("../config/multer-config");
-const router = Router();
+import { addItem, getItemById, getItemByUser, getAllItems } from "../controllers/item.controller.js";
+import { auth } from "../middlewares/auth.middlewares.js";
+const router = Router()
 
-router.post("/create" , upload.single("image") ,  async function(req,res){
-  try{
-    let { name,
-        image, 
-        price,
-        discount, 
-        bgcolor,
-        panelcolor, 
-        textcolor} = req.body;  
-        const createdAt = new Date();  
+router.route("/addItem").post(auth, addItem)
+router.route("/getItemById/:itemId").get(auth, getItemById)
+router.route("/getItemByUser/:userId").get(auth, getItemByUser)
+router.route("/getAllItems").get(getAllItems)
 
-        let product = await productModel.create({
-            image : req.file.buffer, 
-            name,
-            price,
-            discount, 
-            bgcolor,
-            panelcolor, 
-            textcolor,
-            createdAt
-           });
-        req.flash("success" , "Product created succesfully...");
-        res.redirect("/owners/admin");
-    } 
-   catch(err){
-    res.send(err.message);
-   }
-});
-
-export default router;
+export default router
