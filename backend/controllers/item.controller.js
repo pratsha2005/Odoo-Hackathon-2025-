@@ -1,35 +1,45 @@
 import { Item } from "../models/item.models.js";
 
+const addItem = async (req, res) => {
+    try {
+        const { description, redeemPoints } = req.body;
 
-const addItem = async(req, res) => {
-    const {description, redeemPoints} = req.body
-    if(!description || !redeemPoints) {
-        throw new Error("Require description and redeemPoints")
-    }
-    const user = req.user
+        if (!description || !redeemPoints) {
+            throw new Error("Require description and redeemPoints");
+        }
 
-    const item = await Item.create({
-        uploader: user._id,
-        description,
-        redeemPoints,
-    })
-    if(!item){
-        throw new Error("Failed to create item")
+        const user = req.user;
+
+        const item = await Item.create({
+            uploader: user._id,
+            description,
+            redeemPoints,
+            image: req.file?.buffer || null,
+        });
+
+        if (!item) {
+            throw new Error("Failed to create item");
+        }
+
+        return res.status(201).json({
+            message: "Item created successfully",
+            data: item.schema,
+        });
+    } catch (err) {
+        return res.status(400).json({ error: err.message });
     }
-    return res
-    .status(201)
-    .json({
-        message: "Item created successfully",
-        data: item.schema
-    })
-}
+};
 
 const getItemById = async(req, res) => {
     const { itemId } = req.params
-    const item = await Item.findById(itemId)
+    const item = await Item.findById(itemId).lean();
 
     if(!item){
         throw new Error("Item Id Invalid")
+    }
+
+    if (item.image) {
+        item.image = item.image.toString('base64');
     }
 
     return res
@@ -45,11 +55,18 @@ const getItemByUser = async(req, res) => {
         const {userId} = req.params
         const items = await Item.find({
             uploader: userId
-        }).populate('uploader', 'username profile')
+        }).populate('uploader', 'username profile').lean();
 
         if(!items){
             throw new Error("Some error occurred in getting items for user")
         }
+        
+        // Convert each image to base64
+        items.forEach(item => {
+            if (item.image) {
+                item.image = item.image.toString('base64');
+            }
+        });
 
         return res
         .status(200)
@@ -66,10 +83,17 @@ const getItemByUser = async(req, res) => {
 
 const getAllItems = async(req, res) => {
     try {
-        const items = await Item.find().populate('uploader', 'profile username')
+        const items = await Item.find().populate('uploader', 'profile username').lean();
         if(!items) {
             throw new Error("Some error occurred in getting all items")
         }
+
+        // Convert each image to base64
+        items.forEach(item => {
+            if (item.image) {
+                item.image = item.image.toString('base64');
+            }
+        });
 
         return res
         .status(200)

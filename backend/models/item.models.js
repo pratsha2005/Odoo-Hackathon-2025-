@@ -7,7 +7,6 @@ const itemSchema = mongoose.Schema({
     },
     image: {
         type: Buffer,
-        //required
         default: ""
     },
     redeemPoints: {
