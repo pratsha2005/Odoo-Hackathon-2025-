@@ -15,10 +15,11 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    profile: {
-        type: String,
-        default: ""
-    }
+    
+    // profile: {
+    //     type: String,
+    //     default: ""
+    // }
 }, {timestamps: true})
 
 userSchema.pre("save", async function(next){

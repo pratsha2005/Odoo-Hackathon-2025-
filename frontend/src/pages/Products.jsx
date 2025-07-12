@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { assets } from "../assets/assets";
 import Title from "../components/Title";
 import ProductItem from "../components/ProductItem";
@@ -9,6 +10,45 @@ const productsData = products;
 
 const Products = () => {
   const [showFilter, setShowFilter] = useState(false);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const initialCategory = queryParams.get("category");
+
+  const [selectedCategories, setSelectedCategories] = useState(
+    initialCategory ? [initialCategory] : []
+  );
+  const [selectedTypes, setSelectedTypes] = useState([]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+  const handleCategoryChange = (e) => {
+    const value = e.target.value;
+    setSelectedCategories((prev) =>
+      prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
+    );
+  };
+
+  const handleTypeChange = (e) => {
+    const value = e.target.value;
+    setSelectedTypes((prev) =>
+      prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
+    );
+  };
+
+  const handleClearFilters = () => {
+    setSelectedCategories([]);
+    setSelectedTypes([]);
+  };
+
+  const filteredProducts = productsData.filter((product) => {
+    const categoryMatch =
+      selectedCategories.length === 0 || selectedCategories.includes(product.category);
+    const typeMatch =
+      selectedTypes.length === 0 || selectedTypes.includes(product.subCategory);
+    return categoryMatch && typeMatch;
+  });
+
   return (
     <div className="flex flex-col gap-1 pt-10 border-t sm:flex-row sm:gap-10">
       {/* Filter Options */}
@@ -33,15 +73,33 @@ const Products = () => {
           <p className="mb-3 text-sm font-medium">CATEGORIES</p>
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
             <label className="flex gap-2 cursor-pointer">
-              <input className="w-3" type="checkbox" value="Men" />
+              <input
+                className="w-3"
+                type="checkbox"
+                value="Men"
+                checked={selectedCategories.includes("Men")}
+                onChange={handleCategoryChange}
+              />
               Men
             </label>
             <label className="flex gap-2 cursor-pointer">
-              <input className="w-3" type="checkbox" value="Women" />
+              <input
+                className="w-3"
+                type="checkbox"
+                value="Women"
+                checked={selectedCategories.includes("Women")}
+                onChange={handleCategoryChange}
+              />
               Women
             </label>
             <label className="flex gap-2 cursor-pointer">
-              <input className="w-3" type="checkbox" value="Kids" />
+              <input
+                className="w-3"
+                type="checkbox"
+                value="Kids"
+                checked={selectedCategories.includes("Kids")}
+                onChange={handleCategoryChange}
+              />
               Kids
             </label>
           </div>
@@ -55,21 +113,42 @@ const Products = () => {
           <p className="mb-3 text-sm font-medium">TYPES</p>
           <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
             <label className="flex gap-2 cursor-pointer">
-              <input className="w-3" type="checkbox" value="Topwear" />
+              <input
+                className="w-3"
+                type="checkbox"
+                value="Topwear"
+                checked={selectedTypes.includes("Topwear")}
+                onChange={handleTypeChange}
+              />
               Topwear
             </label>
             <label className="flex gap-2 cursor-pointer">
-              <input className="w-3" type="checkbox" value="Bottomwear" />
+              <input
+                className="w-3"
+                type="checkbox"
+                value="Bottomwear"
+                checked={selectedTypes.includes("Bottomwear")}
+                onChange={handleTypeChange}
+              />
               Bottomwear
             </label>
             <label className="flex gap-2 cursor-pointer">
-              <input className="w-3" type="checkbox" value="Winterwear" />
+              <input
+                className="w-3"
+                type="checkbox"
+                value="Winterwear"
+                checked={selectedTypes.includes("Winterwear")}
+                onChange={handleTypeChange}
+              />
               Winterwear
             </label>
           </div>
         </div>
         {/* Clear Filters Button */}
-        <button className="px-4 py-2 mt-1 text-white bg-black rounded hover:bg-gray-900">
+        <button
+          onClick={handleClearFilters}
+          className="px-4 py-2 mt-1 text-white bg-black rounded hover:bg-gray-900"
+        >
           Clear Filters
         </button>
       </div>
@@ -81,7 +160,7 @@ const Products = () => {
         </div>
         {/* Map Products */}
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 gap-y-6">
-          {productsData.map((item) => (
+          {filteredProducts.map((item) => (
             <ProductItem
               key={item._id}
               id={item._id}
