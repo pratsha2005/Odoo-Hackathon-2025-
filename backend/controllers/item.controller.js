@@ -2,13 +2,14 @@ import { Item } from "../models/item.models.js";
 
 const addItem = async (req, res) => {
     try {
-        const { description, redeemPoints, category, subcategory, size } = req.body;
+        const {title, description, redeemPoints, category, subcategory, size } = req.body;
 
-        if (!description || !redeemPoints || !category || !subcategory || !size) {
+        if (!title || !description || !redeemPoints || !category || !subcategory || !size) {
             throw new Error("Require all fields");
         }
         const user = req.user;
         const item = await Item.create({
+            title,
             uploader: user._id,
             description,
             redeemPoints,
@@ -90,7 +91,8 @@ const getItemByUser = async(req, res) => {
 
 const getAllItems = async(req, res) => {
     try {
-        const items = await Item.find({availability:"available"}).populate('uploader', 'profile username').lean();
+        const items = await Item.find({availability: "available"}).populate('uploader', 'profile username').lean();
+        
         if(!items) {
             throw new Error("Some error occurred in getting all items")
         }

@@ -3,7 +3,8 @@ import jwt from "jsonwebtoken"
 
 const options = {
     httpOnly: true,
-    secure: false
+    secure: false,
+    expires: new Date(Date.now() + 30 * 60 * 1000) // 30 minutes
 }
 
 const registerUser = async (req, res) => {
@@ -85,7 +86,7 @@ const loginUser = async (req, res) => {
 const logout = async (req, res, next) => {
     res
     .status(200)
-    .clearCookie('jwt', options)
+    .clearCookie('jwt', { path: '/' })
     .json({
         message: "User logged out successfully"
     })

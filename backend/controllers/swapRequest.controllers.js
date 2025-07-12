@@ -71,13 +71,22 @@ const acceptRequest = async(req, res) =>{
         { uploader: requester, availability: "swapped" },   // fields to update
         { new: true } // returns the updated document
     );
-
+    const redeem = (wanted.redeemPoints)/2
     const updatedOffered = await Item.findByIdAndUpdate(
         swap.offered,
         { uploader: owner, availability: "swapped" },
         { new: true }
     )
-
+    const updatedOwner = await User.findByIdAndUpdate(
+        swap.owner,
+        {redeemPoints: owner.redeemPoints + redeem },
+        {new: true}
+    )
+    const updatedRequester = await User.findByIdAndUpdate(
+        swap.requester,
+        {redeemPoints: requester.redeemPoints + redeem},
+        {new: true}
+    )
     console.log(updatedOffered)
     console.log(updatedWanted)
 
@@ -99,9 +108,63 @@ const acceptRequest = async(req, res) =>{
     })
 }
 
+const swapWithRedeemPoints = async(req, res) => {
+    const {swapId} = req.params
+    const swap = await Swap.findById(swapId)
+    if(!swap){
+        throw new Error("Swap request not found")
+    }  
+    const wanted = await Item.findById(swap.wanted)
+    const requester = await User.findById(swap.requester)
+    const owner = await User.findById(swap.owner)
+    if(!wanted || !requester || !owner){
+        throw new Error("Couldn't get all variables from swap request")
+    }
+    const availableRedeem = requester.redeemPoints
+    const redeem = wanted.redeemPoints
+    if(availableRedeem < redeem){
+        throw new Error("Not Enough Redeem Points Available")
+    }
+
+    const updatedWanted = await Item.findByIdAndUpdate(
+        swap.wanted,
+        { uploader: requester, availability: "swapped" },   // fields to update
+        { new: true } // returns the updated document
+    );
+    
+    
+    const updatedOwner = await User.findByIdAndUpdate(
+        swap.owner,
+        {redeemPoints: owner.redeemPoints + redeem },
+        {new: true}
+    )
+    const updatedRequester = await User.findByIdAndUpdate(
+        swap.requester,
+        {redeemPoints: requester.redeemPoints - redeem},
+        {new: true}
+    )
+    
+    const updatedSwap = await Swap.findByIdAndUpdate(
+        swapId,
+        { status: "accepted" },
+        { new: true }
+    )
+    if(!updatedSwap){
+        throw new Error("Some error occurred in accepting swap")
+    }
+
+    return res
+    .status(201)
+    .json({
+        message: "Swap Request accepted successfully",
+        data: updatedSwap
+    })
+}
+
 export {
     createSwapRequest,
     rejectRequest,
-    acceptRequest
+    acceptRequest,
+    swapWithRedeemPoints
 }
 
