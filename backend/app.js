@@ -28,7 +28,8 @@ app.use(cookieParser())
 //routes
 import authRoutes from "./routes/user.routes.js"
 import itemRoutes from "./routes/item.routes.js"
-
+import swapRoutes from "./routes/swapRequest.routes.js"
+app.use("/api/v1/swap", swapRoutes)
 app.use("/api/v1/auth", authRoutes)
 app.use("/api/v1/item", itemRoutes)
 export {app}

@@ -13,14 +13,20 @@ const addItem = async(req, res) => {
         description,
         redeemPoints,
     })
+
+    
     if(!item){
         throw new Error("Failed to create item")
+    }
+    const createdItem = await Item.findById(item._id)
+    if(!createdItem){
+        throw new Error("Failed to fetch item")
     }
     return res
     .status(201)
     .json({
         message: "Item created successfully",
-        data: item.schema
+        data: createdItem
     })
 }
 
