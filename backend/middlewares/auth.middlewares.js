@@ -2,12 +2,12 @@ import jwt from "jsonwebtoken";
 import { User } from "../models/users.models.js"
 
 export const auth = async(req, res, next) => {
-    const token = req.cookies.token
+    const token = req.cookies.jwt
     if(!token){
         return res.status(401).json({message: "Log in First"})
     }else{
         try {
-            const decode = jwt.verify(token, process.env.SECRET_KEY)
+            const decode = jwt.verify(token, process.env.JSONSECRETKEY)
             if(!decode){
                 return res.status(401).json({message: "Invalid token"})
             }else{
