@@ -7,32 +7,7 @@ const addItem = async (req, res) => {
         if (!description || !redeemPoints) {
             throw new Error("Require description and redeemPoints");
         }
-
-<<<<<<< HEAD
-    const item = await Item.create({
-        uploader: user._id,
-        description,
-        redeemPoints,
-    })
-
-    
-    if(!item){
-        throw new Error("Failed to create item")
-    }
-    const createdItem = await Item.findById(item._id)
-    if(!createdItem){
-        throw new Error("Failed to fetch item")
-    }
-    return res
-    .status(201)
-    .json({
-        message: "Item created successfully",
-        data: createdItem
-    })
-}
-=======
         const user = req.user;
-
         const item = await Item.create({
             uploader: user._id,
             description,
@@ -40,19 +15,24 @@ const addItem = async (req, res) => {
             image: req.file?.buffer || null,
         });
 
-        if (!item) {
-            throw new Error("Failed to create item");
+    
+        if(!item){
+            throw new Error("Failed to create item")
         }
-
-        return res.status(201).json({
+        const createdItem = await Item.findById(item._id)
+        if(!createdItem){
+            throw new Error("Failed to fetch item")
+        }
+        return res
+        .status(201)
+        .json({
             message: "Item created successfully",
-            data: item.schema,
-        });
-    } catch (err) {
+            data: createdItem
+        })
+    }catch (err) {
         return res.status(400).json({ error: err.message });
     }
-};
->>>>>>> 16b32657f2670dd7d78579762c9a71e67ec3403d
+}
 
 const getItemById = async(req, res) => {
     const { itemId } = req.params
