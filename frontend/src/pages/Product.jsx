@@ -32,6 +32,7 @@ const Product = () => {
 
         setProductData(item);
         setImage(item.image || '');
+        setSize(item.sizes || ''); // if sizes is a string
       } catch (err) {
         console.error("Error fetching product:", err);
       }
@@ -73,22 +74,14 @@ const Product = () => {
 
           <p className='mt-5 text-gray-500 md:w-4/5'>{productData.description}</p>
 
-          {/* Sizes (shown only if array exists) */}
-          {Array.isArray(productData.sizes) && productData.sizes.length > 0 && (
+          {/* Size */}
+          {productData.sizes && (
             <div className='flex flex-col gap-4 my-8'>
               <p className="font-medium">Size</p>
               <div className='flex gap-2'>
-                {productData.sizes.map((s, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setSize(s)}
-                    className={`border py-2 px-4 bg-gray-100 rounded-md ${
-                      s === size ? 'border-orange-500' : ''
-                    }`}
-                  >
-                    {s}
-                  </button>
-                ))}
+                <span className="border py-2 px-4 bg-gray-100 rounded-md border-orange-500">
+                  {productData.sizes}
+                </span>
               </div>
             </div>
           )}

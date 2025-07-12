@@ -1,6 +1,8 @@
-import React, { useState, useRef } from 'react';
-import { addProductRoute } from '../api/routes'; // Adjust the import path as necessary
 import axios from 'axios';
+import { addProductRoute } from '../api/routes';
+import { useState, useRef } from 'react';
+import { toast } from 'react-toastify'; // <-- Add this import
+import 'react-toastify/dist/ReactToastify.css'; // <-- Add this import if not already in your app
 
 const AddProduct = () => {
   const [image, setImage] = useState(null);
@@ -33,7 +35,7 @@ const AddProduct = () => {
 
     // Basic validation
     if (!description || !redeemPoints || !category || !subcategory || !size) {
-      alert('Please fill all required fields.');
+      toast.error('Please fill all required fields.');
       return;
     }
 
@@ -49,7 +51,7 @@ const AddProduct = () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        alert("No token found. Please login again.");
+        toast.error("No token found. Please login again.");
         return;
       }
 
@@ -60,7 +62,7 @@ const AddProduct = () => {
         },
       });
 
-      alert('Product added successfully!');
+      toast.success('Product added successfully!');
 
       // Clear form
       setTitle('');
@@ -74,7 +76,7 @@ const AddProduct = () => {
       if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (error) {
       console.error('Upload error:', error);
-      alert(
+      toast.error(
         error.response?.data?.error ||
         error.response?.data?.message ||
         'Something went wrong while uploading the product.'
