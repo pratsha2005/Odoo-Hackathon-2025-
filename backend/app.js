@@ -20,11 +20,6 @@ app.use(express.urlencoded({
 // cookieParser middleware
 app.use(cookieParser())
 
-
-
-
-
-
 //routes
 import authRoutes from "./routes/user.routes.js"
 import itemRoutes from "./routes/item.routes.js"
