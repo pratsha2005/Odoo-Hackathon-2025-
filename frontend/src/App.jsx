@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Products from './pages/Products'
 import Product from './pages/Product'
 import AddProduct from './pages/AddProduct'
+import Profile from './pages/Profile'
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
         <Route path='/products' element={<Products />} />
         <Route path='/product/:productId' element={<Product />} />
         <Route path='/add-product' element={<AddProduct />} />
+        <Route path='/profile' element={<Profile />} />
         {/* Add more routes as needed */}
       </Routes>
       <Footer />
